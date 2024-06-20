@@ -1,0 +1,8 @@
+[
+    {
+        "ruleID": "portfolioRefresh",
+        "invokeBy": ["chainHolderInvestmentsFullSweep"],
+        "quantity": "holderOwnedBitAge('>', 2)",
+        "action":  "sellBit()"
+    }
+]

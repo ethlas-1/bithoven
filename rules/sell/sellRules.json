@@ -1,0 +1,24 @@
+[
+    {
+        "ruleID": "profitTaking",
+        "invokeBy": ["chainHolderInvestmentsFullSweep"],
+        "quantity":  "bitProfitThreshold(10)",    
+        "action": "sellBit()"
+    },
+    {
+        "ruleID": "portfolioRefresh",
+        "invokeBy": ["chainHolderInvestmentsFullSweep"],
+        "quantity": "holderOwnedBitAge('>', 2)",
+        "action":  "sellBit()"
+    },
+    {
+        "ruleID": "trendingDownUser",
+        "invokeBy": ["chainIndexer"],
+        "conditions": [
+            {
+                "expression": "gamerSupplyDownTick(1)"
+            }
+        ],
+        "action":  "sellBitFromAutoSelectedFleetKey(1)"
+    }
+]

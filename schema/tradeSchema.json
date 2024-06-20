@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Rules Set Set",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "ruleID": {
+        "type": "string"
+      },
+      "invokeBy": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "quantity": {
+        "type": "string"
+      },
+      "action": {
+        "type": "string"
+      },
+      "conditions": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "required": [
+      "ruleID",
+      "invokeBy",
+      "action"
+    ],
+    "title": "Rules Set",
+    "oneOf": [
+      {
+        "required": [
+          "quantity"
+        ],
+        "properties": {
+          "quantity": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "required": [
+          "conditions"
+        ],
+        "properties": {
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "expression": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "expression"
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

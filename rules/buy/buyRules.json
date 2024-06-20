@@ -1,0 +1,58 @@
+[
+    {
+        "ruleID": "newUser",
+        "invokeBy": ["chainIndexer", "cloudNewGamerFeed"],
+        "conditions": [
+            {
+                "expression": "gamerWithinMaxAge(2400)"
+            },
+            {
+                "expression": "gamerTotalBitsInCirculation( '<', 20)"
+            },
+            {
+                "expression": "gamerBitWithinMaxBuyPrice(5)"
+            }
+        ],
+        "action": "buyUpTo(1)"
+    },
+    {
+        "ruleID": "popularUser",
+        "invokeBy": ["chainIndexer"],
+        "conditions": [
+            {
+                "expression": "gamerTotalBitsInCirculation('>', 5)"
+            }, 
+            {
+                "expression": "gamerBitWithinMaxBuyPrice(6)"
+            }
+
+        ],
+        "action": "buyUpTo(1)"
+    },
+    {
+        "ruleID": "trendingUpUser",
+        "invokeBy": ["chainIndexer"],
+        "conditions": [
+            {
+                "expression": "gamerSupplyUpTick(1)"
+            },
+            {
+                "expression": "gamerTotalBitsInCirculationExcludeOwnStake('>', 5)"
+            }
+        ],
+        "action": "buyUpTo(1)"
+    },
+    {
+        "ruleID": "skilledUser",
+        "invokeBy": [ "chainIndexer"],
+        "conditions": [     
+                {
+                    "expression": "gamerTotalBitsInCirculation( '<', 10)"
+                },
+                {
+                    "expression": "gamerWinRate('>', 30)"
+                }        
+            ],
+        "action": "buyUpTo(1)"
+    }
+]

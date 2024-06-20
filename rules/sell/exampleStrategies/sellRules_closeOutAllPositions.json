@@ -1,0 +1,9 @@
+[
+    {
+        "ruleID": "portfolioRefresh",
+        "comment": "Sell every bit owned by the keyFleet that is older than one minute, which in effect liquidates the entire portfolio when combined with an empty buy rule set.",
+        "invokeBy": ["chainHolderInvestmentsFullSweep"],
+        "quantity": "holderOwnedBitAge('>', 10)",
+        "action":  "sellBit()"
+    }
+]

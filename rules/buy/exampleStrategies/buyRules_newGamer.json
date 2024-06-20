@@ -1,0 +1,16 @@
+[
+    {
+        "ruleID": "newUser",
+        "invokeBy": ["cloudNewGamerFeed"],
+        "comment": "buys bits of a user that recently registered in the cloud. The cloudNewGamerFeed component continuously polls for new off-chain gamer records.  Note that the buyUpTo functions assures that the maximum number of bits owned across the entire keyFleet is the parameter that is passed in, so for example 2 bits. ",
+        "conditions": [
+            {
+                "expression": "gamerWithinMaxAge(60)"
+            },
+            {
+                "expression": "gamerTotalBitsInCirculation( '<', 5)"
+            }
+        ],
+        "action": "buyUpTo(2)"
+    }
+]

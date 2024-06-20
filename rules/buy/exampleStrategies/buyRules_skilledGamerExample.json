@@ -1,0 +1,43 @@
+[
+    {
+        "ruleID": "experiencedGamer",
+        "invokeBy": ["chainIndexer"],
+        "comment": "buy user bits based on their skills and experience level (e.g., win rate, number of in-game kills, and games played). The fetching of this data is triggered by an observed on chain trade, by the chainIndexer component.",
+        "conditions": [
+            {
+                "expression": "gamesPlayed( '>', 20)"
+            },
+            {
+                "expression": "gamerTotalBitsInCirculationExcludeOwnStake( '>', 20)"
+            }
+        ],
+        "action": "buyUpTo(3)"
+    },
+    {
+        "ruleID": "triggerhappy",
+        "invokeBy": ["chainIndexer"],
+        "conditions": [
+            {
+                "expression": "gamerSumKills('>=', 15)"
+            }, 
+            {
+                "expression": "gamerBitWithinMaxBuyPrice(6)"
+            }
+
+        ],
+        "action": "buyUpTo(2)"
+    },
+    {
+        "ruleID": "skilledGamer",
+        "invokeBy": [ "chainIndexer"],
+        "conditions": [     
+                {
+                    "expression": "gamerTotalBitsInCirculation( '<', 10)"
+                },
+                {
+                    "expression": "gamerWinRate('>', 40)"
+                }        
+            ],
+        "action": "buyUpTo(1)"
+    }
+]

@@ -1,0 +1,10 @@
+/node_modules/*
+data/archive/*
+data/holders
+data/transactions
+data/orders
+logs/
+package-lock.json
+keyFleet/.env
+common/contractUtil/.env
+config/.env

@@ -1,0 +1,12 @@
+
+{
+  "functionDelay": 3000,
+  "fullSweepInterval": 20000,
+  "tradeGenerationIntervalSeconds": 10,
+  "staleSellOrderMinutes": 10,
+  "tradeGoferIntervalSeconds": 7,
+  "staleBuyOrderMinutes": 10,
+  "warningLogIntervalMinutes": 10,
+  "lowBalCacheTTLMinutes": 5,
+  "preSelectSlotSleepMilliseconds": 200
+}

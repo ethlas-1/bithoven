@@ -1,0 +1,9 @@
+[
+    {
+        "ruleID": "profitTaking",
+        "comment": "sell any bits where sell price minus purchase price yields target profit percentage, e.g., 10 percent or greater",
+        "invokeBy": ["chainHolderInvestmentsFullSweep"],
+        "quantity":  "bitProfitThreshold(10)",    
+        "action": "sellBit()"
+    }
+]

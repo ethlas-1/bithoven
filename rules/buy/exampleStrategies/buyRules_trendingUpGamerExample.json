@@ -1,0 +1,19 @@
+[
+    {
+        "ruleID": "trendingUpUser",
+        "invokeBy": ["chainIndexer"],
+        "comment": "Strategy to buy bits when a recent buy trade for N (e.g. 3) or more bits is observed on chain. The purchase is made when bit supply for the user enters or moves with a target band e.g., in the range between 5 to 10 bits.  ",
+        "conditions": [
+            {
+                "expression": "gamerSupplyUpTick(3)"
+            },
+            {
+                "expression": "gamerTotalBitsInCirculationExcludeOwnStake('>', 5)"
+            },
+            {
+                "expression": "gamerTotalBitsInCirculationExcludeOwnStake('<', 10)"
+            }
+        ],
+        "action": "buyUpTo(3)"
+    }
+]

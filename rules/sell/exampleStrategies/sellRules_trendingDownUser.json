@@ -1,0 +1,16 @@
+[
+    {
+        "ruleID": "trendingDownUser",
+        "comment": "this rule effectively liquidates all bits owned by one of the keyfleet addresses if a recent sell happends one of the recent blocks. Note that amout of bits to sell will be automatically adjusted if the key has less than the amount passed in",
+        "invokeBy": ["chainIndexer"],
+        "conditions": [
+            {
+                "expression": "gamerSupplyDownTick(2)"
+            },
+            {
+                "expression": "gamerTotalBitsInCirculationExcludeOwnStake('<', 5)"
+            }
+        ],
+        "action":  "sellBitFromAutoSelectedFleetKey(1000000)"
+    }
+]
