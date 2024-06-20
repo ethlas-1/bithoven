@@ -39,7 +39,7 @@ This setup has been tested and confirmed to work with [Chainstack](https://chain
 
 For [Alchemy](https://www.alchemy.com) nodes, you will need to purchase their premium plan as well to run it on there.
 
-List of calls made:
+List of calls made during indexing:
 
 ```env
 eth_chainId
@@ -424,7 +424,7 @@ Proposes to buy up to a specified amount of bits.
 
 - `value`: The maximum amount of bits to buy.
 
-### gamesPlayedImpl(operator, gamesPlayed)
+### gamesPlayed(operator, gamesPlayed)
 
 Evaluates the number of games played by the gamer and checks if it meets the specified condition.
 
@@ -449,7 +449,7 @@ Checks if the gamer's bits have been idle within a specified maximum time.
 
 - `value`: The maximum idle time in hours.
 
-### gamerSumKillsImpl(operator, sumKills)
+### gamerSumKills(operator, sumKills)
 
 Evaluates the gamer's sum of kills and checks if it meets the specified condition.
 
