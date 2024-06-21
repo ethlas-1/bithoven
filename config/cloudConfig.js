@@ -5,23 +5,29 @@
  */
 
 const playerStatsSettings = {
-  statsUrl: 'https://aws.ethlas.com/dev/wags/getPlayerStats'
+  statsUrl: "https://aws.ethlas.com/prod/wags/getPlayerStats",
 };
 
 const playerFeedSettings = {
-  playersUrl: 'https://aws.ethlas.com/dev/wags/getAllPlayers?sort=wallet_created_at&page=',
+  playersUrl:
+    "https://aws.ethlas.com/prod/wags/getAllPlayers?sort=wallet_created_at&page=",
   interval: 6000,
-  pageFetchThrottle: 200 // 
+  pageFetchThrottle: 200, //
 };
 
 const slackSettings = {
   slack_channel_info: "bithoven-info",
   slack_channel_error: "bithoven-errors",
-  slack_channel_warning: "bithoven-warnings"
+  slack_channel_warning: "bithoven-warnings",
 };
 
 const logSettings = {
-  logFileSizeLimit: 1024 * 1024 // 1MB size limit for log rotation
+  logFileSizeLimit: 1024 * 1024, // 1MB size limit for log rotation
 };
 
-module.exports = { playerStatsSettings, playerFeedSettings, slackSettings, logSettings };
+module.exports = {
+  playerStatsSettings,
+  playerFeedSettings,
+  slackSettings,
+  logSettings,
+};
