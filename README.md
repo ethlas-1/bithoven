@@ -2,7 +2,7 @@
 
 ## About This Project
 
-Welcome to the Gambit Algorithmic Trading System AKA Bithoven! Bithoven lets you run your own customized investment strategy on the Gambit contract deployed on the Base network. With Bithoven, you can buy and sell player bits (represented by their web3 address in the contract) based on numerous signals and trends (e.g., bits in circulation, win rate, trading activity on the most recent block, and much more!). All of this can be done from your own desktop (or in the cloud) with very minimal system requirements.
+Welcome to the Bithoven, Gambit's Algorithmic Trading System. Bithoven lets you run your own customized investment strategy on the Gambit contract deployed on the Base network. With Bithoven, you can buy and sell player bits (represented by their web3 address in the contract) based on numerous signals and trends (e.g., bits in circulation, win rate, trading activity on the most recent block, and much more!). All of this can be done from your own desktop (or in the cloud) with very minimal system requirements.
 
 By following the instructions in this guide, you will be able to set up and run your own Bithoven bot for trading on the Gambit contract. Happy trading!
 
@@ -37,7 +37,7 @@ To connect to the Base network, you will need an RPC URL. Here is an example of 
 
 This setup has been tested and confirmed to work with [Chainstack](https://chainstack.com). To use Chainstack nodes, you will need to purchase the [Growth plan](https://chainstack.com/pricing/) to enable the necessary calls. The capacity in terms of the number of requests per month covered by this plan (20 million) should suffice for Bithoven blockchain indexing requirements.
 
-For [Alchemy](https://www.alchemy.com) nodes, you will need to purchase their premium plan as well to run it on there.
+For [Alchemy](https://www.alchemy.com/pricing) nodes, you will need to purchase their premium plan as well to run it on there.
 
 List of calls made during indexing:
 
@@ -58,9 +58,9 @@ The Gambit contract used by Bithoven is deployed to the following address: [0x25
 You will need one or more Base addresses (and corresponding private keys) to trade from. While you can trade with a single key, Bithoven will not initiate a new buy/sell transaction from a key until the current one has been mined. To trade on multiple buying and selling opportunities simultaneously, Bithoven enables you to set up a key fleet to trade from. To do this, set up your `.env` file as shown below: (The .env file needs to be set in the config directory)
 
 ```env
-WALLET_1="your-private-key-1"
-WALLET_2="your-private-key-2"
-WALLET_3="your-private-key-3"
+WALLET_0x4c9fBe5b9e6a1fBc5dC2E8270EdB54b64437bAB2="xxxxx"
+WALLET_{WALLET_2}="your-private-key-2"
+WALLET_{WALLET_3}="your-private-key-3"
 BASE_PROVIDER_URL=https://base-mainnet.core.chainstack.com/your-api-key
 ```
 
@@ -184,9 +184,10 @@ Here is an example of a complete `.env` file:
 
 ```env
 slack_key="xxxxx"
-WALLET_1="xxxxx"
-WALLET_2="xxxxx"
-WALLET_3="xxxxx"
+WALLET_0x4c9fBe5b9e6a1fBc5dC2E8270EdB54b64437bAB2="xxxxx"
+WALLET_{WALLET_2}="your-private-key-2"
+WALLET_{WALLET_3}="your-private-key-3"
+
 BASE_PROVIDER_URL="https://base-mainnet.core.chainstack.com/your-api-key"
 ```
 
