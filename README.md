@@ -10,7 +10,7 @@ By following the instructions in this guide, you will be able to set up and run 
 
 - **OS:** A Linux-based system (e.g., Debian, Ubuntu, etc.). This will also work from a Mac shell!
 - **Software:** Node.js (v18.11 or greater), npm, pm2
-- **Storage:** Bithoven uses the local file system to persist state. It is safe to [wipe out the state](#data-directory-cleanup-tool) and start from scratch any time, as the blockchain (BASE) on which the [Gambit contract](https://basescan.org/address/0x25ae3e0099f4Ceb8b70a8b800c788c612163A538#code) is deployed is used as the source of truth. All positions and trades made by the Bithoven operator are rebuilt by the Bithoven blockchain [indexer component](#how-to-start-your-bot) that processes all trade events emitted by the Gambit contract.
+- **Storage:** Bithoven uses the local file system to persist state. It is safe to [wipe out the state](#data-directory-cleanup-tool) and start from scratch any time, as the blockchain (BASE) on which the [Gambit contract](https://basescan.org/address/0x6b4819f78D886eF37d4f9972FD55B0302c947277#code) is deployed is used as the source of truth. All positions and trades made by the Bithoven operator are rebuilt by the Bithoven blockchain [indexer component](#how-to-start-your-bot) that processes all trade events emitted by the Gambit contract.
 
 ## Installation
 
@@ -51,7 +51,7 @@ eth_blockNumber
 
 ## Gambit Contract
 
-The Gambit contract used by Bithoven is deployed to the following address: [0x25ae3e0099f4Ceb8b70a8b800c788c612163A538](https://basescan.org/address/0x25ae3e0099f4Ceb8b70a8b800c788c612163A538). The contract source code for Gambit can be viewed [here](https://basescan.org/address/0x10930f0920fdfbbe0dc7274384d31245592a006d#code).
+The Gambit contract used by Bithoven is deployed to the following address: [0x6b4819f78D886eF37d4f9972FD55B0302c947277](https://basescan.org/address/0x6b4819f78D886eF37d4f9972FD55B0302c947277). The contract source code for Gambit can be viewed [here](https://basescan.org/address/0x10930f0920fdfbbe0dc7274384d31245592a006d#code).
 
 ## Key Fleet
 
@@ -78,7 +78,7 @@ When one of your fleet addresses buys bits from the Gambit contract, the Gambit 
 2. Click on the "Write Contract" tab.
 3. Connect your wallet.
 4. Find the "increaseAllowance" function and enter the following details:
-   - `spender`: The Gambit contract address (`0x25ae3e0099f4Ceb8b70a8b800c788c612163A538`).
+   - `spender`: The Gambit contract address (`0x6b4819f78D886eF37d4f9972FD55B0302c947277`).
    - `addedValue`: Enter a high amount, e.g., `100000000000000000000000` (ensure to set a value high enough to cover multiple transactions).
 5. Click "Write" and confirm the transaction.
 
