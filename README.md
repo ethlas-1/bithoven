@@ -51,7 +51,7 @@ eth_blockNumber
 
 ## Gambit Contract
 
-The Gambit contract used by Bithoven is deployed to the following address: [0x6b4819f78D886eF37d4f9972FD55B0302c947277](https://basescan.org/address/0x6b4819f78D886eF37d4f9972FD55B0302c947277). The contract source code for Gambit can be viewed [here](https://basescan.org/address/0x10930f0920fdfbbe0dc7274384d31245592a006d#code).
+The Gambit contract used by Bithoven is deployed to the following address: [0x6b4819f78D886eF37d4f9972FD55B0302c947277](https://basescan.org/address/0x6b4819f78D886eF37d4f9972FD55B0302c947277). The contract source code for Gambit can be viewed [here](https://basescan.org/address/0xfe924dc310aca6e72296a4936efa61562cb638d8#code).
 
 ## Key Fleet
 
