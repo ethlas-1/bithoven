@@ -18,7 +18,7 @@ Clone the repository:
 **Change the git url below to the actual git url when made**
 
 ```env
-git clone <git url>
+git clone https://github.com/ethlas-1/bithoven.git
 cd bithoven
 npm install
 ```
