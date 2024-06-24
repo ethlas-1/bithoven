@@ -79,7 +79,7 @@ When one of your fleet addresses buys bits from the Gambit contract, the Gambit 
 3. Connect your wallet.
 4. Find the "increaseAllowance" function and enter the following details:
    - `spender`: The Gambit contract address (`0x25ae3e0099f4Ceb8b70a8b800c788c612163A538`).
-   - `addedValue`: Enter a high amount, e.g., `1000000` (ensure to set a value high enough to cover multiple transactions).
+   - `addedValue`: Enter a high amount, e.g., `100000000000000000000000` (ensure to set a value high enough to cover multiple transactions).
 5. Click "Write" and confirm the transaction.
 
 ## How to Start Your Bot
