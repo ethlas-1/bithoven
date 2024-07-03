@@ -376,7 +376,7 @@ To generate the profit and loss (P&L) report for the fleet addresses:
 2. Run the following command:
 
    ```bash
-   node tools/generatePandL.js
+   node scripts/generatePandL.js
    ```
 
    This script retrieves the full store for the fleet addresses, computes the P&L, and prints the results.
@@ -386,7 +386,7 @@ To generate the profit and loss (P&L) report for the fleet addresses:
    You can also provide a specific block number to compute the P&L from that point onward. For example:
 
    ```bash
-   node tools/generatePandL.js 14543534
+   node scripts/generatePandL.js 14543534
    ```
 
    This will calculate profit and loss starting from the block number `14543534`, which is the point in time when your strategy was deployed.
@@ -397,7 +397,7 @@ Once you have configured, tested, and are ready to deploy your trading strategy 
 
 The trading system is designed to handle situations where it fully invests all allocated WELS into gamer bits. In such scenarios, the system will only execute sell bit orders until additional WELS are available. This ensures that the strategy continues to operate smoothly without exceeding the available budget.
 
-To evaluate the performance of your strategy, you can use the `tools/generatePandL.js` tool. This tool helps you analyze profits and losses, enabling you to make informed decisions about your strategy.
+To evaluate the performance of your strategy, you can use the `scripts/generatePandL.js` tool. This tool helps you analyze profits and losses, enabling you to make informed decisions about your strategy.
 
 Based on the evaluation, you have several options:
 
@@ -448,7 +448,7 @@ Checks if the gamer's bits have been idle within a specified maximum time.
 
 **Parameters:**
 
-- `value`: The maximum idle time in hours.
+- `value`: The maximum idle time in minutes.
 
 ### gamerSumKills(operator, sumKills)
 
