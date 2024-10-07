@@ -20,10 +20,18 @@ const TradeUtil = require('../trade/tradeUtil');
 const logger = new Logger();
 const provider = new ethers.providers.JsonRpcProvider(config.providerURL);
 const keyFleet = new KeyFleet();
+const fs = require('fs');
+const path = require('path');
+const { buySellMemCacheTtlSeconds } = require('../../config/jobsConfig');
+const buyMemCache = require('memory-cache-ttl');
+const sellMemCache = require('memory-cache-ttl');
+const { checkTimeIntervals } = require('../contractUtil/checkTimeIntervals');
+buyMemCache.init({ ttl: buySellMemCacheTtlSeconds, interval: 120, randomize: false });
+sellMemCache.init({ ttl: buySellMemCacheTtlSeconds, interval: 120, randomize: false });
 
 /**
  * Evaluates if the holder-owned bits' age meets the specified condition.
- *
+ *s
  * @param {Object} ctx - The context object containing gamer and holder fields.
  * @param {string} operator - The comparison operator (e.g., '>', '>=', '<', '<=', '==').
  * @param {string} ageInMinutes - The age in minutes as a string representation of an integer.
@@ -287,6 +295,208 @@ async function gamerSupplyDownTickImpl(ctx, amount) {
 
   console.log("gamerSupplyDownTickImpl(...) => " + res);
   return res;
+}
+
+////////////////////////////////////////////////////////////////////
+
+/**
+ * used to check if a recent purchase event is reached (or exceeded target amount), E.g., 3 or more bits were just bought.
+ * bit movements beloinging to the keyfleet are excluded.
+ *
+ * @param {Object} ctx - The context object containing the gamer field.
+ * @param {string} amount - The amount is the target number of bits passed in as a string representation of an integer.
+ * @returns {Promise<boolean>} - True if the condition is met, otherwise false.
+ */
+async function gamerBuysImpl(ctx, amount, periodInMinutes) {
+  console.log(`gamerBuysImpl(${JSON.stringify(ctx)}, ${amount}, ${periodInMinutes})`);
+  if (!ctx.holder) {
+    throw new InvalidParameterError('The ctx object must have holder field');
+  }
+
+  if (!ctx.gamer) {
+    throw new InvalidParameterError('The ctx object must have gamer field');
+  }
+  if (!ctx.isBuy){ // just ctx.isBuy no ! for it
+    return false;
+  }
+
+  if (!ctx.bitAmount) {
+    return false;
+  }
+  if (keyFleet.isAddressInKeyFleet(ctx.holder)){
+    return false;
+  }
+
+  // Check if amount is a string representation of an integer
+  if (typeof amount !== 'string' || !/^\d+$/.test(amount)) {
+    throw new InvalidParameterError('The amount parameter must be a string representation of an integer');
+  }
+
+  // Convert amount to BigNumber for comparison
+  const amountBN = ethers.BigNumber.from(amount);
+  const bitMoveBN = ethers.BigNumber.from(ctx.bitAmount + "");
+
+  //console.log("tick amountBN " + amountBN.toString());
+  //console.log("tick bitMoveBN " + bitMoveBN.toString());
+
+  //lookup cache
+  let gamerBuys = buyMemCache.get(ctx.gamer);
+  
+  if(!gamerBuys){
+    gamerBuys = [];
+
+  }
+  gamerBuys.push({bitAmount: bitMoveBN, timeStamp: Date.now()})
+  buyMemCache.set(ctx.gamer, gamerBuys);
+
+  let res = (bitMoveBN.gte(amountBN));
+  //convert to int
+  periodInMinutes = parseInt(periodInMinutes, 10);
+  res = checkTimeIntervals(gamerBuys, amountBN, periodInMinutes);
+
+  if (res){
+    ctx.callback = async function() {
+      buyMemCache.set(ctx.gamer, []);
+    }
+  }
+
+  console.log("gamerBuysImpl(...) => " + res);
+  return res;
+}
+
+
+////////////////////////////////////////////////////////////////////
+
+/**
+ * used to check if a recent sell event is reached (or exceeded target amount), E.g., 3 or more bits were just sold.
+ * bit movements beloinging to the keyfleet are excluded.
+ *
+ * @param {Object} ctx - The context object containing the gamer field.
+ * @param {string} amount - The amount is the target number of bits passed in as a string representation of an integer.
+ * @returns {Promise<boolean>} - True if the condition is met, otherwise false.
+ */
+async function gamerSellsImpl(ctx, amount, periodInMinutes) {
+  console.log(`gamerSellsImpl(${JSON.stringify(ctx)}, ${amount}, ${periodInMinutes})`);
+  if (!ctx.holder) {
+    throw new InvalidParameterError('The ctx object must have holder field');
+  }
+
+  if (!ctx.gamer) {
+    throw new InvalidParameterError('The ctx object must have gamer field');
+  }
+  if (ctx.isBuy){ // just ctx.isBuy no ! for it
+    return false;
+  }
+
+  if (!ctx.bitAmount) {
+    return false;
+  }
+  if (keyFleet.isAddressInKeyFleet(ctx.holder)){
+    return false;
+  }
+
+  // Check if amount is a string representation of an integer
+  if (typeof amount !== 'string' || !/^\d+$/.test(amount)) {
+    throw new InvalidParameterError('The amount parameter must be a string representation of an integer');
+  }
+
+  // Convert amount to BigNumber for comparison
+  const amountBN = ethers.BigNumber.from(amount);
+  const bitMoveBN = ethers.BigNumber.from(ctx.bitAmount + "");
+
+  //console.log("tick amountBN " + amountBN.toString());
+  //console.log("tick bitMoveBN " + bitMoveBN.toString());
+
+  //lookup cache
+  let gamerSells = sellMemCache.get(ctx.gamer);
+
+  if(!gamerSells){
+    gamerSells = [];
+
+  }
+  gamerSells.push({bitAmount: bitMoveBN, timeStamp: Date.now()})
+  sellMemCache.set(ctx.gamer, gamerSells);
+
+  let res = (bitMoveBN.gte(amountBN));
+  //convert to int
+  periodInMinutes = parseInt(periodInMinutes, 10);
+  res = checkTimeIntervals(gamerSells, amountBN, periodInMinutes);
+
+  if (res){
+    ctx.callback = async function() {
+      sellMemCache.set(ctx.gamer, []);
+    }
+  }
+  console.log("gamerSellsImpl(...) => " + res);
+  return res;
+}
+
+/**
+ * Checks if the current gamer's address exists in the specified whitelist.
+ *
+ * @param {Object} ctx - The context object containing the gamer field.
+ * @param {string} whitelistName - The name of the whitelist file (without the .json extension).
+ * @returns {Promise<boolean>} - True if the gamer's address is in the whitelist, otherwise false.
+ */
+async function isGamerInWhitelistImpl(ctx, whitelistName) {
+  console.log(`isGamerInWhitelistImpl(${JSON.stringify(ctx)}, ${whitelistName})`);
+
+  if (!ctx.gamer) {
+    throw new InvalidParameterError('The ctx object must have a gamer field');
+  }
+
+  const whitelistPath = path.resolve(__dirname, ' ../../../../data/whitelist', `${whitelistName}.json`);
+
+  // Read and parse the whitelist file
+  let whitelist;
+  try {
+    const data = fs.readFileSync(whitelistPath, 'utf8');
+    whitelist = JSON.parse(data);
+  } catch (err) {
+    console.error(`Failed to read whitelist file: ${err.message}`);
+    return false;
+  }
+  //console.log(JSON.stringify(whitelist));
+  // Convert gamer's address to lowercase and check against each address in the whitelist
+  const isInWhitelist = whitelist.some(addr => addr.toLowerCase() === ctx.gamer.toLowerCase());
+
+  console.log(`isGamerInWhitelistImpl(...) => ${isInWhitelist}`);
+  return isInWhitelist;
+}
+
+/**
+ * Checks if the current gamer's address does not exist in the specified whitelist.
+ *
+ * @param {Object} ctx - The context object containing the gamer field.
+ * @param {string} whitelistName - The name of the whitelist file (without the .json extension).
+ * @returns {Promise<boolean>} - True if the gamer's address is not in the whitelist, otherwise false.
+ */
+async function isGamerNotInWhitelistImpl(ctx, whitelistName) {
+  console.log(`isGamerNotInWhitelistImpl(${JSON.stringify(ctx)}, ${whitelistName})`);
+
+  if (!ctx.gamer) {
+    throw new InvalidParameterError('The ctx object must have a gamer field');
+  }
+
+  
+  const whitelistPath = path.resolve(__dirname, ' ../../../../data/whitelist', `${whitelistName}.json`);
+  // Read and parse the whitelist file
+
+  let whitelist;
+  try {
+    const data = fs.readFileSync(whitelistPath, 'utf8');
+    whitelist = JSON.parse(data);
+  } catch (err) {
+    console.error(`Failed to read whitelist file: ${err.message}`);
+    return false;
+  }
+  //console.log(JSON.stringify(whitelist));
+
+  // Convert gamer's address to lowercase and check against each address in the whitelist
+  const isNotInWhitelist = !whitelist.some(addr => addr.toLowerCase() === ctx.gamer.toLowerCase());
+
+  console.log(`isGamerNotInWhitelistImpl(...) => ${isNotInWhitelist}`);
+  return isNotInWhitelist;
 }
 
 /**
@@ -726,6 +936,10 @@ module.exports = {
   bitProfitThresholdImpl,
   gamerSupplyUpTickImpl,
   gamerSupplyDownTickImpl,
-  gamerTotalBitsInCirculationExcludeOwnStakeImpl
+  gamerTotalBitsInCirculationExcludeOwnStakeImpl,
+  gamerBuysImpl,
+  gamerSellsImpl,
+  isGamerInWhitelistImpl,
+  isGamerNotInWhitelistImpl
 };
 

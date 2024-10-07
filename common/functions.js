@@ -20,7 +20,11 @@ const {
   gamerSupplyDownTickImpl,
   gamerTotalBitsInCirculationExcludeOwnStakeImpl,
   gamerSumKillsImpl,
-  gamesPlayedImpl
+  gamesPlayedImpl,
+  gamerBuysImpl,
+  gamerSellsImpl,
+  isGamerInWhitelistImpl,
+  isGamerNotInWhitelistImpl
 } = require('./conditions/conditions');
 const { buyUpToImpl, sellBitImpl, sellBitFromAutoSelectedFleetKeyImpl } = require('./actions/actions');
 
@@ -84,6 +88,22 @@ async function sellBit(ctx) {
   await sellBitImpl(ctx);
 }
 
+async function gamerBuys(ctx, amount, periodInMinutes){
+  return await gamerBuysImpl(ctx, amount, periodInMinutes)
+}
+
+async function gamerSells(ctx, amount, periodInMinutes){
+  return await gamerSellsImpl(ctx, amount, periodInMinutes)
+}
+
+async function isGamerInWhitelist(ctx, value){
+  return await isGamerInWhitelistImpl(ctx, value)
+}
+
+async function isGamerNotInWhitelist(ctx, value){
+  return await isGamerNotInWhitelistImpl(ctx, value)
+}
+
 module.exports = {
   holderOwnedBitAge,
   gamerWithinMaxAge,
@@ -99,5 +119,9 @@ module.exports = {
   gamerTotalBitsInCirculationExcludeOwnStake,
   sellBitFromAutoSelectedFleetKey,
   gamerSumKills,
-  gamesPlayed
+  gamesPlayed,
+  gamerBuys,
+  gamerSells,
+  isGamerInWhitelist,
+  isGamerNotInWhitelist,
 };

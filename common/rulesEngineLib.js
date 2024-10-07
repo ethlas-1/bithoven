@@ -78,11 +78,19 @@ async function evaluateAndInvokeRulesAsync(ctx, rules) {
 
     if (allConditionsMet && rule.quantity) {
       ctx.quantity = await functions[rule.quantity.functionName](ctx, ...rule.quantity.args);
+      if (ctx.callback){
+        await ctx.callback();
+        ctx.callback = null;
+      }
     }
 
     if (allConditionsMet) {
       ctx.rule = rule;
       await functions[rule.action.functionName](ctx, ...rule.action.args);
+      if (ctx.callback){
+        await ctx.callback();
+        ctx.callback = null;
+      }
     }
   }
 }

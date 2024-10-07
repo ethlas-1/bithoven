@@ -1,0 +1,5 @@
+[[rules]]
+id = "ignore-erc20-buyer-token"
+description = "Ignore specific ERC20 token addresses"
+regex = '''0x7F62ac1e974D65Fab4A81821CA6AF659A5F46298'''
+tags = ["allowlist"]

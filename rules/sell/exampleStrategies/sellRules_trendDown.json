@@ -1,0 +1,13 @@
+[
+    {
+        "ruleID": "sellTrendingBits",
+        "comment": "Sell when bits are trending down",
+        "invokeBy": ["chainIndexer"],
+        "conditions": [
+            {
+                "expression": "gamerSells(5,30)"
+            }
+        ],
+        "action":  "sellBitFromAutoSelectedFleetKey(1)"
+    }
+]

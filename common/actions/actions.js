@@ -124,6 +124,10 @@ async function sellBitFromAutoSelectedFleetKeyImpl(ctx, amount) {
 
   const holder = await TradeUtil.getLargestKeyFleetOwnerOfGamer(ctx.gamer);
 
+  if(holder == null){
+    return;
+  }
+
   // Adjust the sell target amount
   const adjustedQuantity = await TradeUtil.adjustSellTargetAmount(ctx.gamer, holder, amountInt);
   

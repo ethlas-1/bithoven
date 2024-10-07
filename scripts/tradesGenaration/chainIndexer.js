@@ -91,79 +91,78 @@ class ChainIndexer {
       return;
     }
 
-    try {
-      await this.store.addHolder(holderAddress);
-    } catch (error) {
-      console.error(`[ChainIndexer] Failed to add holder ${holderAddress}:`, error);
-      throw error;
-    }
-
-    if (eventDetails.isBuy) {
-      const peakSupply = eventDetails.supply;
-      const purchasePrice = ethers.BigNumber.from(eventDetails.ethAmount)
-        .add(ethers.BigNumber.from(eventDetails.protocolEthAmount))
-        .add(ethers.BigNumber.from(eventDetails.gamerEthAmount))
-        .toString();
-
-      const newBatch = {
-        InitialBatchAmount: bitAmount,
-        remainingBatchAmount: bitAmount,
-        purchasePrice: purchasePrice,
-        BlockNumOnWhichBitsWereBought: blockNumber,
-        peakSupply: peakSupply
-      };
-
+    if (this.keyFleet.getAllAddresses().includes(holderAddress)) {
       try {
-        await this.store.addGamerBatch(holderAddress, gamerAddress, newBatch);
-        console.log(`[ChainIndexer] Added new batch for gamer ${gamerAddress} under holder ${holderAddress}`);
+        await this.store.addHolder(holderAddress);
       } catch (error) {
-        if (error instanceof JSONStoreError) {
-          console.error(`[ChainIndexer] Add Gamer Batch Error - Code: ${error.code}, Message: ${error.message}`);
-          throw error;
-        } else {
-          console.error(`[ChainIndexer] Unexpected Error: ${error.message}`);
-          throw error;
-        }
+        console.error(`[ChainIndexer] Failed to add holder ${holderAddress}:`, error);
+        throw error;
       }
-    } else {
-      let bitsToDeduct = bitAmount;
-      const sellPrice = ethers.BigNumber.from(eventDetails.ethAmount).toString();
 
-      try {
-        const batchFiles = await this.store.getBatchFilesInAscendingOrder(holderAddress, gamerAddress);
-        for (const batchFile of batchFiles) {
-          const batchNumber = parseInt(batchFile.match(/^batch_(\d+)\.json$/)[1], 10);
-          const batch = await this.store.getBatchFile(holderAddress, gamerAddress, batchNumber);
+      if (eventDetails.isBuy) {
+        const peakSupply = eventDetails.supply;
+        const purchasePrice = ethers.BigNumber.from(eventDetails.ethAmount)
+          .add(ethers.BigNumber.from(eventDetails.protocolEthAmount))
+          .add(ethers.BigNumber.from(eventDetails.gamerEthAmount))
+          .toString();
 
-          if (batch.remainingBatchAmount >= bitsToDeduct) {
-            await this.store.updateGamerBatch(holderAddress, gamerAddress, batchNumber, bitsToDeduct, blockNumber, sellPrice);
-            console.log(`Updated batch ${batchNumber} for gamer ${gamerAddress} under holder ${holderAddress}`);
-            bitsToDeduct = 0;
-            break;
+        const newBatch = {
+          InitialBatchAmount: bitAmount,
+          remainingBatchAmount: bitAmount,
+          purchasePrice: purchasePrice,
+          BlockNumOnWhichBitsWereBought: blockNumber,
+          peakSupply: peakSupply
+        };
+
+        try {
+          await this.store.addGamerBatch(holderAddress, gamerAddress, newBatch);
+          console.log(`[ChainIndexer] Added new batch for gamer ${gamerAddress} under holder ${holderAddress}`);
+        } catch (error) {
+          if (error instanceof JSONStoreError) {
+            console.error(`[ChainIndexer] Add Gamer Batch Error - Code: ${error.code}, Message: ${error.message}`);
+            throw error;
           } else {
-            bitsToDeduct -= batch.remainingBatchAmount;
-            await this.store.updateGamerBatch(holderAddress, gamerAddress, batchNumber, batch.remainingBatchAmount, blockNumber, sellPrice);
-            console.log(`[ChainIndexer] Updated batch ${batchNumber} for gamer ${gamerAddress} under holder ${holderAddress}, bits remaining to deduct: ${bitsToDeduct}`);
+            console.error(`[ChainIndexer] Unexpected Error: ${error.message}`);
+            throw error;
           }
         }
+      } else {
+        let bitsToDeduct = bitAmount;
+        const sellPrice = ethers.BigNumber.from(eventDetails.ethAmount).toString();
 
-        if (bitsToDeduct > 0) {
-          console.error(`[ChainIndexer] Not enough bits to deduct for gamer ${gamerAddress} under holder ${holderAddress}`);
-          throw new JSONStoreError('Not enough bits to deduct.', 'INSUFFICIENT_BITS');
-        }
+        try {
+          const batchFiles = await this.store.getBatchFilesInAscendingOrder(holderAddress, gamerAddress);
+          for (const batchFile of batchFiles) {
+            const batchNumber = parseInt(batchFile.match(/^batch_(\d+)\.json$/)[1], 10);
+            const batch = await this.store.getBatchFile(holderAddress, gamerAddress, batchNumber);
 
-      } catch (error) {
-        if (error instanceof JSONStoreError) {
-          console.error(`[ChainIndexer] Update Gamer Batch Error - Code: ${error.code}, Message: ${error.message}`);
-          throw error;
-        } else {
-          console.error(`[ChainIndexer] Unexpected Error: ${error.message}`);
-          throw error;
+            if (batch.remainingBatchAmount >= bitsToDeduct) {
+              await this.store.updateGamerBatch(holderAddress, gamerAddress, batchNumber, bitsToDeduct, blockNumber, sellPrice);
+              console.log(`Updated batch ${batchNumber} for gamer ${gamerAddress} under holder ${holderAddress}`);
+              bitsToDeduct = 0;
+              break;
+            } else {
+              bitsToDeduct -= batch.remainingBatchAmount;
+              await this.store.updateGamerBatch(holderAddress, gamerAddress, batchNumber, batch.remainingBatchAmount, blockNumber, sellPrice);
+              console.log(`[ChainIndexer] Updated batch ${batchNumber} for gamer ${gamerAddress} under holder ${holderAddress}, bits remaining to deduct: ${bitsToDeduct}`);
+            }
+          }
+
+          if (bitsToDeduct > 0) {
+            console.error(`[ChainIndexer] Not enough bits to deduct for gamer ${gamerAddress} under holder ${holderAddress}`);
+            throw new JSONStoreError('Not enough bits to deduct.', 'INSUFFICIENT_BITS');
+          }
+
+        } catch (error) {
+          if (error instanceof JSONStoreError) {
+            console.error(`[ChainIndexer] Update Gamer Batch Error - Code: ${error.code}, Message: ${error.message}`);
+            throw error;
+          } else {
+            console.error(`[ChainIndexer] Unexpected Error: ${error.message}`);
+            throw error;
+          }
         }
       }
-    }
-
-    if (this.keyFleet.getAllAddresses().includes(holderAddress)) {
       await this.txGofer.markMinedOrder(holderAddress, eventDetails.txHash);
     }
 
@@ -193,28 +192,26 @@ class ChainIndexer {
    * @param {number} batchSize - The number of blocks to fetch in each batch.
    * @throws {Error} Throws an error if fetching events fails.
    */
-  async fetchEvents(startBlock, endBlock, batchSize) {
-    for (let i = startBlock; i <= endBlock; i += batchSize) {
-      const fromBlock = i;
-      const toBlock = Math.min(i + batchSize - 1, endBlock);
-
-      console.log(`[ChainIndexer] Fetching events from block ${fromBlock} to ${toBlock}`);
-      try {
-        const eventLogs = await this.contract.queryFilter(this.contract.filters.Trade(), fromBlock, toBlock);
-        for (const event of eventLogs) {
-          const eventDetails = this.extractTradeEventDetails(event);
-          //console.log('[ChainIndexer] Event Details:', eventDetails);
-          await this.storeEventDetails(eventDetails);
-        }
-
-      } catch (error) {
-        console.error(`[ChainIndexer] Error fetching events from block ${fromBlock} to ${toBlock}:`, error);
-        throw error;
+ async fetchEvents(startBlock, endBlock, batchSize) {
+  const keyFleet = new KeyFleet();
+  const keyFleetAddresses = keyFleet.getAllAddresses();
+  for (let i = startBlock; i <= endBlock; i += batchSize) {
+    const fromBlock = i;
+    const toBlock = Math.min(i + batchSize - 1, endBlock);
+    console.log(`[ChainIndexer] Fetching events from block ${fromBlock} to ${toBlock}`);
+    try {
+      const eventLogs = await this.contract.queryFilter(this.contract.filters.Trade(), fromBlock, toBlock);
+      for (const event of eventLogs) {
+        const eventDetails = this.extractTradeEventDetails(event);
+        await this.storeEventDetails(eventDetails);
       }
+    } catch (error) {
+      console.error(`[ChainIndexer] Error fetching events from block ${fromBlock} to ${toBlock}:`, error);
+      throw error;
     }
-
-    console.log('[ChainIndexer] Finished fetching all events.');
   }
+  console.log('[ChainIndexer] Finished fetching all events.');
+}
   /**
    * Catches up the indexer by fetching and processing all past events.
    *

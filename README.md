@@ -519,6 +519,57 @@ Evaluates if the holder-owned bits' age meets the specified condition.
 - `operator`: The comparison operator (e.g., '>', '>=', '<', '<=', '==').
 - `value`: The age in minutes.
 
+### gamerBuys(amount, value)
+
+Checks if a recent purchase event has reached or exceeded the target amount. For example, this could be used to determine if 3 or more bits were bought recently. Bit movements belonging to the key fleet are excluded.
+
+**Parameters:**
+
+- `amount`: The target number of bits as a string representation of an integer.
+- `value`: The time period in minutes over which to evaluate the purchases.
+
+**Returns:**
+
+- A `Promise<boolean>` that resolves to `true` if the condition is met, otherwise `false`.
+
+### gamerSells(amount, value)
+
+Checks if a recent sell event has reached or exceeded the target amount. For example, this could be used to determine if 3 or more bits were sold recently. Bit movements belonging to the key fleet are excluded.
+
+**Parameters:**
+
+- `amount`: The target number of bits as a string representation of an integer.
+- `value`: The time period in minutes over which to evaluate the sales.
+
+**Returns:**
+
+- A `Promise<boolean>` that resolves to `true` if the condition is met, otherwise `false`.
+
+### isGamerInWhitelist(value)
+
+Checks if the current gamer's address exists in the specified whitelist.
+
+**Whitelist file directory located in `/bithoven/data/whitelist`**
+
+**Parameters:**
+
+- `value`: The name of the whitelist file (without the `.json` extension).
+
+**Returns:**
+
+- `true` if the gamer's address is in the whitelist, otherwise `false`.
+
+### isGamerNotInWhitelist(value)
+
+Checks if the current gamer's address does not exist in the specified whitelist.
+
+**Whitelist file directory located in `/bithoven/data/whitelist`**
+
+
+**Parameters:**
+
+- `value`: The name of the whitelist file (without the `.json` extension).
+
 ### sellBit()
 
 Proposes to sell bits based on current context.
@@ -526,6 +577,7 @@ Proposes to sell bits based on current context.
 ### sellBitFromAutoSelectedFleetKey()
 
 Proposes to sell bits using an automatically selected key from the key fleet.
+
 
 ### Adding Your Own Custom Function
 
@@ -558,3 +610,32 @@ To use the `scripts/deleteFileStore.js` script, follow these steps:
 3. **Restart the Scripts**: Once the data directory has been cleared, restart the `investor.js` and `tradeGofer.js` scripts. The `investor.js` script will rebuild the local store by re-indexing all events emitted by the Gambit contract, ensuring that the local data store is fully synchronized and up-to-date.
 
 By following these steps, you can effectively manage and maintain the integrity of your Bithoven trading system's local data store.
+
+
+## Release Notes (10/04)
+
+### New Lambda Signature Function
+
+- **Lambda Signature Call for Smart Contract Buy Method**:
+
+  The purpose of this signature is to validate the purchase of whitelisted bits based on the amount of trading volume you have. This ensures that only eligible traders can participate in purchasing certain bits, making the process more secure and regulated.
+
+  We introduced a feature that calls the Lambda signature function and passes the signature into the new `buy` method on the Gambit smart contract. This enables smoother and more secure execution when buying bits through the Bithoven platform. The `buy` method now supports signature-based validation, allowing for a secure and streamlined purchase process.  
+  
+
+
+### Gamer Buy and Sell Features
+
+- **New `gamerBuys` and `gamerSells` Functions**:  
+  These functions allow the system to track and execute buy/sell operations based on recent trends in a gamer's performance. The `gamerBuys` function tracks the number of bits recently bought for a specific gamer and evaluates whether the number exceeds a certain threshold within a given time period. Similarly, `gamerSells` tracks the number of bits sold. These new functions empower your trading strategy to capitalize on trending gamers by purchasing or selling bits when they exhibit strong positive or negative trends.
+
+  **Example Use**:  
+  If a gamer’s bit supply starts trending up, the system can trigger a purchase (using `gamerBuys`), and if the bit supply trends down, it can trigger a sale (using `gamerSells`). 
+
+### Whitelist Function for Trading Restrictions
+
+- **Whitelist Trading Feature**:  
+  We’ve added a whitelist functionality to allow for more controlled trading. This allows you to define a whitelist rule so that Bithoven will only trade bits related to certain games, such as Dota. The whitelist ensures that only bits from the specified players or games can be traded, providing tighter control over your strategy.
+
+  **Example**:  
+  You can configure the system to trade only Dota-related bits by adding a rule that restricts the bot to execute trades solely for Dota players.

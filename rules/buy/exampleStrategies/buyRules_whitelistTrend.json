@@ -1,0 +1,16 @@
+[
+    {
+        "ruleID": "buyTrendingBits",
+        "comment": "Buy when bits are trending, and when on whitelist",
+        "invokeBy": ["chainIndexer"],
+        "conditions": [
+            {
+                "expression": "gamerBuys(2,20)"
+            },
+            {
+                "expression": "isGamerInWhitelist(exampleWhitelist)"
+            }
+        ],
+        "action":  "buyUpTo(1)"
+    }
+]
