@@ -12,12 +12,15 @@
     "ethers": "^5.7.0",
     "fs-extra": "^11.2.0",
     "generate-schema": "^2.6.0",
+    "memory-cache-ttl": "^1.0.52",
     "perf_hooks": "^0.0.1",
-    "sinon": "^18.0.0"
+    "sinon": "^18.0.0",
+    "web3": "^1.10.4"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-waffle": "^2.0.6",
     "chai": "^5.1.1",
+    "husky": "^9.1.6",
     "jest": "^29.7.0"
   }
 }

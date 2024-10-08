@@ -43,7 +43,7 @@ class TaskQueue {
         resolve(result);
       } catch (error) {
         logger.logError({ msg: error.message }, 'TASK_QUEUE_ERROR');
-        //reject(error);
+        resolve(null); //Keep going for network errors
       } finally {
         this.processNext();
       }

@@ -16,18 +16,28 @@ const playerFeedSettings = {
 };
 
 const slackSettings = {
-  slack_channel_info: "bithoven-info",
-  slack_channel_error: "bithoven-errors",
-  slack_channel_warning: "bithoven-warnings",
+  slack_channel_info: "bithoven-logs",
+  slack_channel_error: "bithoven-err",
+  slack_channel_warning: "bithoven-warn",
 };
 
 const logSettings = {
   logFileSizeLimit: 1024 * 1024, // 1MB size limit for log rotation
 };
 
+const uidMappingLinks = {
+  getUIDByAddress: "https://aws.ethlas.com/prod/user/getUIDByAddress",
+};
+
+const buySignatureLinks = {
+  buySignatureWhitelist: "https://aws.ethlas.com/prod/user/buyWhitelistSignature",
+}
+
 module.exports = {
   playerStatsSettings,
   playerFeedSettings,
   slackSettings,
   logSettings,
+  uidMappingLinks,
+  buySignatureLinks
 };
