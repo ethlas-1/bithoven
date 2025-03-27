@@ -565,7 +565,6 @@ Checks if the current gamer's address does not exist in the specified whitelist.
 
 **Whitelist file directory located in `/bithoven/data/whitelist`**
 
-
 **Parameters:**
 
 - `value`: The name of the whitelist file (without the `.json` extension).
@@ -577,7 +576,6 @@ Proposes to sell bits based on current context.
 ### sellBitFromAutoSelectedFleetKey()
 
 Proposes to sell bits using an automatically selected key from the key fleet.
-
 
 ### Adding Your Own Custom Function
 
@@ -611,7 +609,6 @@ To use the `scripts/deleteFileStore.js` script, follow these steps:
 
 By following these steps, you can effectively manage and maintain the integrity of your Bithoven trading system's local data store.
 
-
 ## Release Notes (10/04)
 
 ### New Lambda Signature Function
@@ -620,9 +617,7 @@ By following these steps, you can effectively manage and maintain the integrity 
 
   The purpose of this signature is to validate the purchase of whitelisted bits based on the amount of trading volume you have. This ensures that only eligible traders can participate in purchasing certain bits, making the process more secure and regulated.
 
-  We introduced a feature that calls the Lambda signature function and passes the signature into the new `buy` method on the Gambit smart contract. This enables smoother and more secure execution when buying bits through the Bithoven platform. The `buy` method now supports signature-based validation, allowing for a secure and streamlined purchase process.  
-  
-
+  We introduced a feature that calls the Lambda signature function and passes the signature into the new `buy` method on the Gambit smart contract. This enables smoother and more secure execution when buying bits through the Bithoven platform. The `buy` method now supports signature-based validation, allowing for a secure and streamlined purchase process.
 
 ### Gamer Buy and Sell Features
 
@@ -630,12 +625,51 @@ By following these steps, you can effectively manage and maintain the integrity 
   These functions allow the system to track and execute buy/sell operations based on recent trends in a gamer's performance. The `gamerBuys` function tracks the number of bits recently bought for a specific gamer and evaluates whether the number exceeds a certain threshold within a given time period. Similarly, `gamerSells` tracks the number of bits sold. These new functions empower your trading strategy to capitalize on trending gamers by purchasing or selling bits when they exhibit strong positive or negative trends.
 
   **Example Use**:  
-  If a gamer’s bit supply starts trending up, the system can trigger a purchase (using `gamerBuys`), and if the bit supply trends down, it can trigger a sale (using `gamerSells`). 
+  If a gamer's bit supply starts trending up, the system can trigger a purchase (using `gamerBuys`), and if the bit supply trends down, it can trigger a sale (using `gamerSells`).
 
 ### Whitelist Function for Trading Restrictions
 
 - **Whitelist Trading Feature**:  
-  We’ve added a whitelist functionality to allow for more controlled trading. This allows you to define a whitelist rule so that Bithoven will only trade bits related to certain games, such as Dota. The whitelist ensures that only bits from the specified players or games can be traded, providing tighter control over your strategy.
+  We've added a whitelist functionality to allow for more controlled trading. This allows you to define a whitelist rule so that Bithoven will only trade bits related to certain games, such as Dota. The whitelist ensures that only bits from the specified players or games can be traded, providing tighter control over your strategy.
 
   **Example**:  
   You can configure the system to trade only Dota-related bits by adding a rule that restricts the bot to execute trades solely for Dota players.
+
+### Contract-Specific Configuration
+
+Bithoven now supports multiple game contracts, each requiring its own bot instance:
+
+1. **Dota (WELS) Contract**: `0x6b4819f78D886eF37d4f9972FD55B0302c947277`
+
+   - Used exclusively for Dota bits
+
+2. **Multi-Game (USDC) Contract**: `0x5739EdBcc6916fB1A68991F7A6e3951334d2898b`
+   - Used for all other game bits (Valorant, CS2, etc.)
+
+To configure your bot for a specific contract, update the `chainConfig.js` file with:
+
+- The appropriate `contractAddress` from above
+- The correct contract type (`"WELS"` or `"USDC"`)
+
+Each contract requires a separate bot instance, so you'll need to run two separate setups if you wish to trade on both contracts simultaneously.
+
+### Game-Specific Metadata and Signals
+
+The Bithoven bot can trade bits for different games (e.g., BSD, Dota, Valorant, CS2). However, not all metadata fields are available or relevant for every game. For instance, gamerWinRate was available for BSD but not used for Dota.
+
+Use the reference below to see which signals/functions are currently supported by each game. Attempting to use a function that is not supported by a game will generally cause your rule's condition to evaluate to false (or be ignored).
+
+### Supported Signals/Functions
+
+| **Signal / Function**                          | **BSD** | **Dota** | **Valorant** | **CS2** | **Notes**                                                                                                               |
+| ---------------------------------------------- | :-----: | :------: | :----------: | :-----: | ----------------------------------------------------------------------------------------------------------------------- |
+| **gamerWinRate**                               |    ✓    |    ✗     |      ✗       |    ✗    | Only populated for BSD at this time.                                                                                    |
+| **gamerSumKills**                              |    ✓    |    ✗     |      ✗       |    ✗    | Available for most MOBA/FPS games. (Dota → kills; Valorant/CS2 → kills, however functionaility currently not built in)  |
+| **gamesPlayed**                                |    ✓    |    ✗     |      ✗       |    ✗    | Universal field indicating the total number of matches (or rounds) played by the gamer.                                 |
+| **gamerSupplyUpTick / gamerSupplyDownTick**    |    ✓    |    ✓     |      ✓       |    ✓    | Universal signals indicating a significant increase/decrease in the gamer's bit supply (regardless of game).            |
+| **gamerTotalBitsInCirculation**                |    ✓    |    ✓     |      ✓       |    ✓    | Universal field indicating how many bits (total) are currently owned by all market participants for this gamer.         |
+| **gamerWithinMaxAge**                          |    ✓    |    ✓     |      ✓       |    ✓    | Universal field indicating how "new" the gamer is (based on wallet registration/first-play data).                       |
+| **gamerBitWithinMaxBuyPrice**                  |    ✓    |    ✓     |      ✓       |    ✓    | Universal check for the gamer's current bit buy price vs. your specified maximum buy limit.                             |
+| **gamerBuys / gamerSells**                     |    ✓    |    ✓     |      ✓       |    ✓    | Universal functions checking how many new buys/sells occurred (excluding your own keyFleet's trades) in a given period. |
+| **holderOwnedBitAge**                          |    ✓    |    ✓     |      ✓       |    ✓    | Universal function checking how long your keyFleet has held bits for a given gamer.                                     |
+| **isGamerInWhitelist / isGamerNotInWhitelist** |    ✓    |    ✓     |      ✓       |    ✓    | Universal logic for restricting trades to (or excluding) certain addresses.                                             |

@@ -30,8 +30,13 @@ const uidMappingLinks = {
 };
 
 const buySignatureLinks = {
-  buySignatureWhitelist: "https://aws.ethlas.com/prod/user/buyWhitelistSignature",
-}
+  buySignatureWhitelist:
+    "https://aws.ethlas.com/prod/user/buyWhitelistSignature",
+};
+const sellSignatureLinks = {
+  sellSignatureWhitelist:
+    "https://aws.ethlas.com/prod/user/sellWhitelistSignature",
+};
 
 module.exports = {
   playerStatsSettings,
@@ -39,5 +44,6 @@ module.exports = {
   slackSettings,
   logSettings,
   uidMappingLinks,
-  buySignatureLinks
+  buySignatureLinks,
+  sellSignatureLinks,
 };
