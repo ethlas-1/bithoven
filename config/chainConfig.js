@@ -12,8 +12,8 @@ const configs = {
   base: {
     network: "Base",
     simulation: false,
-    buyGasLimit: 180000,
-    sellGasLimit: 180000,
+    buyGasLimit: 700000,
+    sellGasLimit: 700000,
     providerURL: process.env.BASE_PROVIDER_URL,
     contractAddress: "0x6b4819f78D886eF37d4f9972FD55B0302c947277",
     batchSize: 1000,
@@ -23,7 +23,12 @@ const configs = {
     catchUpDelta: 40,
     minGasFeesBalance: ethers.utils.parseEther("0.0001"), // Minimum gas fee balance in ETH
     ERC20BuyerToken: "0x7F62ac1e974D65Fab4A81821CA6AF659A5F46298",
-    minERC20Balance: ethers.utils.parseEther("3"), // Minimum ERC20 token balance
+    contractType: "USDC", // Specify the contract type
+    get minERC20Balance() {
+      return ethers.utils[
+        this.contractType === "USDC" ? "parseUnits" : "parseEther"
+      ]("3", this.contractType === "USDC" ? 6 : 18);
+    },
     maxPendingInSeconds: 120, // Maximum pending order time in seconds
     restartDelaySeconds: 5, // in case of indexing disruption
   },
