@@ -82,6 +82,9 @@ When one of your fleet addresses buys bits from the Gambit contract, the Gambit 
    - `addedValue`: Enter a high amount, e.g., `100000000000000000000000` (ensure to set a value high enough to cover multiple transactions).
 5. Click "Write" and confirm the transaction.
 
+## Security
+Audited by [FailSafe](https://getfailsafe.com/)
+
 ## How to Start Your Bot
 
 Ensure your .env file is correctly set up with your wallet keys and provider URL.
